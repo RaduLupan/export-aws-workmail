@@ -16,3 +16,9 @@ variable "s3_prefix" {
   type        = string
   default     = "aws-workmail-export"
 }
+
+variable "iam_user" {
+  description = "The name of an IAM user with admin permissions (if null new user will be created)"
+  type        = string
+  default     = null
+}
