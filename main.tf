@@ -6,8 +6,13 @@ locals {
   #iam_user = var.iam_user == null ?         
   s3_name = "${var.s3_prefix}-${lower(random_string.random.result)}-${var.region}"
 
-  arn_root="arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-  arn_user="arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.iam_user}"
+  arn_root = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+  arn_user = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.iam_user}"
+  
+  arn_kms  = aws_kms_key.a.arn
+  arn_s3   = "${aws_s3_bucket.mail_export.arn}/*"
+
+  account_id = data.aws_caller_identity.current.account_id
 }
 
 # Use this data source to get the access to the effective Account ID, User ID, and ARN in which Terraform is authorized.
@@ -81,4 +86,49 @@ resource "aws_s3_bucket" "mail_export" {
       days = 30
     }
   }
+}
+
+# Manages S3 bucket-level Public Access Block configuration.
+resource "aws_s3_bucket_public_access_block" "main" {
+  bucket = aws_s3_bucket.mail_export.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# Template file for the IAM role trust policy.
+data "template_file" "iam_role_trust" {
+  template = file("${path.module}/iam-role-trust.json.tpl")
+
+  vars = {
+    account_id = local.account_id
+  }
+}
+
+# Template file for the IAM role policy.
+data "template_file" "iam_role_policy" {
+  template = file("${path.module}/iam-role-policy.json.tpl")
+
+  vars = {
+    arn_kms = local.arn_kms
+    arn_s3  = local.arn_s3
+  }
+}
+
+# IAM role.
+resource "aws_iam_role" "main" {
+  name = "aws-workmail-export-role"
+  path = "/"
+
+  assume_role_policy = data.template_file.iam_role_trust.rendered
+}
+
+# IAM  role policy.
+resource "aws_iam_role_policy" "main" {
+  name = "aws-workmail-export-role-policy"
+  role = aws_iam_role.main.id
+
+  policy = data.template_file.iam_role_policy.rendered
 }
