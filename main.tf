@@ -7,7 +7,7 @@ locals {
   s3_name = "${var.s3_prefix}-${lower(random_string.random.result)}-${var.region}"
 
   arn_root = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-  arn_user = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.iam_user}"
+  arn_user = var.iam_user == null ? aws_iam_user.admin[0].arn : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.iam_user}"
   
   arn_kms  = aws_kms_key.a.arn
   arn_s3   = "${aws_s3_bucket.mail_export.arn}/*"
@@ -35,6 +35,28 @@ resource "aws_iam_user" "admin" {
     Name      = "mail-export-admin"
     terraform = true
   }
+}
+
+# Add WorkMail Admin policy to the IAM user if var.iam_user is null.
+resource "aws_iam_user_policy" "workmail_admin" {
+  count = var.iam_user == null ? 1 : 0
+
+  name = "WorkMail-Admin"
+  user = aws_iam_user.admin[0].name
+
+  # Terraform's "jsonencode" function converts a Terraform expression result to valid JSON syntax.
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "workmail:*",
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
 }
 
 # Template file for the KMS key policy.
