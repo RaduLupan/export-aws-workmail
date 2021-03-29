@@ -3,8 +3,15 @@
     "Statement": [
         {
             "Effect": "Allow",
-            "Action": "s3:*",
-            "Resource": "*"
+            "Action": [
+                "s3:AbortMultipartUpload",
+                "s3:PutObject",
+                "s3:GetBucketPolicyStatus"
+            ],
+            "Resource": [
+                "${arn_kms}",
+                "${arn_kms}/*"
+            ]
         },
         {
             "Effect": "Allow",
