@@ -4,7 +4,7 @@ This repository contains Terraform configurations that deploy the [prerequisites
 ## Pre-requisites
 
 * [Amazon Web Services (AWS) account](http://aws.amazon.com/).
-* Terraform 0.13 installed on your computer. Check out HasiCorp [documentation](https://learn.hashicorp.com/terraform/azure/install) on how to install Terraform.
+* Terraform 0.14 installed on your computer. Check out HasiCorp [documentation](https://learn.hashicorp.com/terraform/azure/install) on how to install Terraform.
 
 ## Quick start
 
