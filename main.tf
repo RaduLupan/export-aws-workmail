@@ -55,6 +55,13 @@ resource "aws_iam_user_policy" "workmail_admin" {
         Effect   = "Allow"
         Resource = "*"
       },
+      {
+        Action = [
+          "cloudshell:*"
+        ]
+        Effect = "Allow"
+        Resource = "*"
+      }
     ]
   })
 }
