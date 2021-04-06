@@ -8,9 +8,9 @@ locals {
 
   arn_root = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
   arn_user = var.iam_user == null ? aws_iam_user.admin[0].arn : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.iam_user}"
-  
-  arn_kms  = aws_kms_key.a.arn
-  arn_s3   = "${aws_s3_bucket.mail_export.arn}/*"
+
+  arn_kms = aws_kms_key.a.arn
+  arn_s3  = "${aws_s3_bucket.mail_export.arn}/*"
 
   account_id = data.aws_caller_identity.current.account_id
 }
@@ -59,7 +59,7 @@ resource "aws_iam_user_policy" "workmail_admin" {
         Action = [
           "cloudshell:*"
         ]
-        Effect = "Allow"
+        Effect   = "Allow"
         Resource = "*"
       }
     ]
