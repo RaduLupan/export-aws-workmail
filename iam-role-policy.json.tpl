@@ -27,7 +27,7 @@
                     "kms:ViaService": "s3.us-east-1.amazonaws.com"
                 },
                 "StringLike": {
-                    "kms:EncryptionContext:aws:s3:arn": "${arn_s3}"
+                    "kms:EncryptionContext:aws:s3:arn": "${arn_s3}/*"
                 }
             }
         }
