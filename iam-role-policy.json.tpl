@@ -9,8 +9,8 @@
                 "s3:GetBucketPolicyStatus"
             ],
             "Resource": [
-                "${arn_kms}",
-                "${arn_kms}/*"
+                "${arn_s3}",
+                "${arn_s3}/*"
             ]
         },
         {
