@@ -24,7 +24,7 @@
             ],
             "Condition": {
                 "StringEquals": {
-                    "kms:ViaService": "s3.us-east-1.amazonaws.com"
+                    "kms:ViaService": "s3.${region}.amazonaws.com"
                 },
                 "StringLike": {
                     "kms:EncryptionContext:aws:s3:arn": "${arn_s3}/*"

@@ -139,6 +139,7 @@ data "template_file" "iam_role_policy" {
   vars = {
     arn_kms = local.arn_kms
     arn_s3  = local.arn_s3
+    region  = var.region
   }
 }
 
